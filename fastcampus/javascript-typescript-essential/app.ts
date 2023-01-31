@@ -3,15 +3,30 @@ type Store = {
   feeds: NewsFeed[];
 }
 
-type NewsFeed = {
+type News = {
   id: number;
-  comments_count: number;
+  time_ago: string;
+  title: string;
   url: string;
   user: string;
-  time_ago: string;
+  content: string;
+}
+
+type NewsFeed = News & {
+  comments_count: number;
   points: number;
-  title: string;
-  read?: boolean; //선택속성 이라는 듯
+  domain: string;
+  read?: boolean; //선택속성 이라는 뜻
+}
+
+type NewsDetail = News & {
+  contents_count: number;
+  comments?: NewsComment[];
+}
+
+type NewsComment = News & {
+  comments?: NewsComment[];
+  level: number;
 }
 
 const container: HTMLElement | null = document.getElementById('root');
@@ -23,14 +38,14 @@ const store: Store = {
   feeds: [],
 };
 
-function getData(url: string) {
+function getData(url: string): NewsFeed[] | NewsDetail[] {
   ajax.open('GET', url, false);
   ajax.send();
 
   return JSON.parse(ajax.response);
 }
 
-function makeFeeds(feeds) {
+function makeFeeds(feeds: []) {
   for (let i = 0; i < feeds.length; i++) {
     feeds[i].read = false;
   }
