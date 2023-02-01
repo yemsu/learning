@@ -1,32 +1,32 @@
-type Store = {
+interface Store {
   currentPage: number;
   feeds: NewsFeed[];
 }
 
-type News = {
-  id: number;
-  time_ago: string;
-  title: string;
-  url: string;
-  user: string;
-  content: string;
+interface News {
+  readonly id: number;
+  readonly time_ago: string;
+  readonly title: string;
+  readonly url: string;
+  readonly user: string;
+  readonly content: string;
 }
 
-type NewsFeed = News & {
-  comments_count: number;
-  points: number;
-  domain: string;
+interface NewsFeed extends News {
+  readonly comments_count: number;
+  readonly points: number;
+  readonly domain: string;
   read?: boolean; //선택속성 이라는 뜻
 }
 
-type NewsDetail = News & {
-  contents_count: number;
-  comments: NewsComment[];
+interface NewsDetail extends News {
+  readonly contents_count: number;
+  readonly comments: NewsComment[];
 }
 
-type NewsComment = News & {
-  comments: NewsComment[];
-  level: number;
+interface NewsComment extends News {
+  readonly comments: NewsComment[];
+  readonly level: number;
 }
 
 const container: HTMLElement | null = document.getElementById('root');
