@@ -38,6 +38,40 @@ const store: Store = {
   feeds: [],
 };
 
+class Api {
+  url: string;
+  ajax: XMLHttpRequest;
+
+  constructor(url: string) {
+    this.url = url;
+    this.ajax = new XMLHttpRequest();
+  }
+
+  // 바깥쪽에서 호출하지 않는것은 protected
+  protected getRequest<AjaxResponse>(): AjaxResponse {
+    this.ajax.open('GET', this.url, false);
+    this.ajax.send();
+  
+    return JSON.parse(this.ajax.response);
+  }
+}
+
+class NewsFeedApi extends Api {
+  url = 'https://api.hnpwa.com/v0/news/1.json'
+
+  getData(): NewsFeed[] {
+    return this.getRequest<NewsFeed[]>();
+  }
+}
+
+class NewsDetailApi extends Api {
+  url = 'https://api.hnpwa.com/v0/news/1.json'
+
+  getData(): NewsDetail {
+    return this.getRequest<NewsDetail>();
+  }
+}
+
 function getData<AjaxResponse>(url: string): AjaxResponse {
   ajax.open('GET', url, false);
   ajax.send();
@@ -61,6 +95,7 @@ function updateView(html: string): void { //return 값이 없을때
 }
 
 function newsFeed(): void {
+  const api = new NewsFeedApi(NEWS_URL)
   let newsFeed: NewsFeed[] = store.feeds;
   const newsList = [];
   let template = `
@@ -89,7 +124,7 @@ function newsFeed(): void {
   `;
 
   if (newsFeed.length === 0) {
-    newsFeed = store.feeds = makeFeeds(getData<NewsFeed[]>(NEWS_URL))
+    newsFeed = store.feeds = makeFeeds(api.getData())
   }
 
   for(let i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
