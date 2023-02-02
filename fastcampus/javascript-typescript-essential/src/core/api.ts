@@ -25,7 +25,7 @@ export class NewsFeedApi extends Api {
 }
 
 export class NewsDetailApi extends Api {
-  getData(id: string): NewsDetail {
+  getData(): NewsDetail {
     return this.getRequest<NewsDetail>();
   }
 }
