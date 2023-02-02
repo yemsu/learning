@@ -1,8 +1,7 @@
 import View from '../core/view'
 import { NewsDetailApi } from '../core/api'
-import { NewsDetail, NewsComment } from '../types'
+import { NewsDetail, NewsComment, NewsStore } from '../types'
 import { CONTENT_URL } from '../config'
-import { NewsStore } from '../types'
 
 const template = `
 <div class="bg-gray-600 min-h-screen pb-8">
@@ -45,14 +44,17 @@ export default class NewsDetailView extends View {
   render(): void {
     const id = location.hash.substr(7);
     const api = new NewsDetailApi(CONTENT_URL.replace('@id', id))
-    const newsDetail: NewsDetail = api.getData(id)
-  
-    this.store.makeRead(Number(id))
-    this.setTemplateData('comments', this.makeComment(newsDetail.comments))
-    this.setTemplateData('currentPage', String(this.store.currentPage))
-    this.setTemplateData('title', newsDetail.title)
-    this.setTemplateData('content', newsDetail.content)
-    this.updateView()
+    api.getData((data: NewsDetail) => {
+      const { title, content, comments } = data
+    
+      this.store.makeRead(Number(id))
+      this.setTemplateData('comments', this.makeComment(comments))
+      this.setTemplateData('currentPage', String(this.store.currentPage))
+      this.setTemplateData('title', title)
+      this.setTemplateData('content', content)
+
+      this.updateView()
+    })
   }
 
   makeComment(comments: NewsComment[]): string {
